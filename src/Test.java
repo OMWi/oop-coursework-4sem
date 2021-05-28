@@ -1,4 +1,4 @@
-import com.data.ServiceInfo;
+import com.data.services.ServiceInfo;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

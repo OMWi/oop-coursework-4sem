@@ -1,54 +1,98 @@
 package com.gui;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.data.Serializer;
-import com.data.ServiceInfo;
+import com.data.clients.ClientInfo;
+import com.data.clients.DBHandler;
+import com.data.orders.OrderInfo;
+import com.data.services.Serializer;
+import com.data.services.ServiceInfo;
 
-public class MainForm {
-    private JPanel PanelMain;
-    private JTable table1;
+public class MainForm implements MenuListener {
+    private JPanel panelMain;
+    private JTable tableClients;
+    private JMenuBar menuBar;
+    JMenu menuOptions;
+
+    private ArrayList<ClientInfo> clients;
+    private ArrayList<ServiceInfo> services;
+    private Serializer serializer;
+    private DBHandler dbHandler;
+
+    private String serviceFilePath = "services";
+    private  String tableName = "clients";
+    private String dbName = "oop_4sem";
+    private String url = "jdbc:mysql://localhost:3306/oop_4sem";
+    private String user = "root";
+    private String password = "573458";
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("App");
-        frame.setContentPane(new MainForm().PanelMain);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setMinimumSize(new Dimension(600, 480));
-        frame.setJMenuBar(createMenuBar());
+        new MainForm();
+        //OrderInfo order = new OrderInfo(new ServiceInfo("service", "service_type", 10),
+        //        new ClientInfo("name", "name", "name"), LocalDate.now());
+    }
 
-        // todo: dump on close (or not)
-        ArrayList<ServiceInfo> services;
-        String fileName = "services";
-        Serializer serializer = new Serializer();
+    public MainForm() {
         try {
-            services = (ArrayList<ServiceInfo>) serializer.load(fileName);
-        }
-        catch (Exception e) {
-            // todo: do smth
-        }
+            serializer = new Serializer();
+            services = (ArrayList<ServiceInfo>) serializer.load(serviceFilePath);
+        } catch (Exception e) { }
+        try {
+            dbHandler = new DBHandler(dbName, tableName, url, user, password);
+            clients = dbHandler.read();
+        } catch (Exception e) { }
 
+        JFrame frame = new JFrame("Химчистка");
+        // frame.setContentPane(new MainForm().panelMain);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(600, 480));
 
+        frame.setJMenuBar(createMenuBar());
+        ClientTableModel model = new ClientTableModel(clients);
+        tableClients = new JTable(model);
+        frame.add(new JScrollPane(tableClients));
+
+        // frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    public static JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Menu");
-        //add menu, alt+m to click
-        menu.setMnemonic(KeyEvent.VK_M);
-        menu.getAccessibleContext().setAccessibleDescription("KekW menu");
-        menuBar.add(menu);
+    public JMenuBar createMenuBar() {
+        menuBar = new JMenuBar();
+        JMenu menuOptions = new JMenu("Options");
+        menuOptions.setMnemonic(KeyEvent.VK_O);
+        // menu.getAccessibleContext().setAccessibleDescription("Options");
+        JMenuItem menuItem = new JMenuItem("New order");
+        menuOptions.add(menuItem);
+        menuOptions.addMenuListener(this);
 
-        JMenuItem menuItem = new JMenuItem("KekW option 1");
-        menu.add(menuItem);
+
+        menuBar.add(menuOptions);
+
+
         return menuBar;
+    }
+
+    @Override
+    public void menuSelected(MenuEvent e) {
+        if (e.getSource().equals(menuOptions)) {
+            e.
+        }
+    }
+
+    @Override
+    public void menuDeselected(MenuEvent e) {
+
+    }
+
+    @Override
+    public void menuCanceled(MenuEvent e) {
+
     }
 }

@@ -1,5 +1,6 @@
-package com.data;
-import javax.swing.plaf.nimbus.State;
+package com.data.clients;
+import com.data.clients.ClientInfo;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,20 +9,27 @@ import java.util.ArrayList;
 
 public class DBHandler {
     private  String tableName = "clients";
+    private String dbName = "oop_4sem";
     private String url = "jdbc:mysql://localhost:3306/oop_4sem";
     private String user = "root";
     private String password = "573458";
     private Connection connection;
     private Statement statement;
 
-    public void read() throws Exception {
+    public ArrayList<ClientInfo> read() throws Exception {
         ArrayList<ClientInfo> list = new ArrayList<>();
-        ResultSet resultSet = statement.executeQuery("select * from" + tableName);
-        while (resultSet.next()) {
-            list.add(new ClientInfo(resultSet.getString(1), resultSet.getString(2),
-                    resultSet.getString(3), resultSet.getInt(4)));
+        try {
+            ResultSet resultSet = statement.executeQuery("select * from " + tableName);
+            while (resultSet.next()) {
+                list.add(new ClientInfo(resultSet.getString(2), resultSet.getString(3),
+                        resultSet.getString(4), resultSet.getInt(5)));
+            }
         }
-        System.out.println(list);
+        catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return list;
     }
 
     public void add(ClientInfo client) throws  Exception {
@@ -33,7 +41,12 @@ public class DBHandler {
         statement.execute("DELETE FROM " + tableName + " WHERE id=" + id);
     }
 
-    public DBHandler(String tableName, String url, String user, String password) throws Exception {
+    public void delete(ClientInfo client) throws Exception {
+        statement.execute("DELETE FROM " + dbName + "WHERE ");
+    }
+
+    public DBHandler(String dbName, String tableName, String url, String user, String password) throws Exception {
+        this.dbName = dbName;
         this.tableName = tableName;
         this.url = url;
         this.user = user;
@@ -41,5 +54,8 @@ public class DBHandler {
         this.connection = DriverManager.getConnection(url, user, password);
         this.statement = this.connection.createStatement();
     }
+
+
+
 
 }

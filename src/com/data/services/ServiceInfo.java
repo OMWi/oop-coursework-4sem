@@ -1,4 +1,4 @@
-package com.data;
+package com.data.services;
 
 import java.io.Serializable;
 public class ServiceInfo implements Serializable{
@@ -14,7 +14,7 @@ public class ServiceInfo implements Serializable{
 
     @Override
     public String toString() {
-        return "com.data.ServiceInfo{" +
+        return "com.data.services.ServiceInfo{" +
                 "type='" + type + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
