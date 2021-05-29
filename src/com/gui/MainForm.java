@@ -43,32 +43,37 @@ public class MainForm {
         //        new ClientInfo("name", "name", "name"), LocalDate.now());
     }
 
+
     public MainForm() {
+        //reading data
         try {
             serializer = new Serializer();
             services = (ArrayList<ServiceInfo>) serializer.load(serviceFilePath);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
         try {
             dbHandler = new DBHandler(dbName, tableName, url, user, password);
             clients = dbHandler.read();
-        } catch (Exception e) {
-        }
-        frame = new JFrame("Химчистка");
+        } catch (Exception e) { }
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(1200, 720));
-
+        //creating mainFrame
+        frame = createMainFrame("Химчистка");
         frame.setJMenuBar(createMenuBar());
+        addTables(frame);
+        /*
         ClientTableModel model = new ClientTableModel(clients);
         tableClients = new JTable(model);
-        desktopPane = new JDesktopPane();
-        desktopPane.add(new JScrollPane(tableClients));
-        frame.add(desktopPane);
-
-        // frame.pack();
-        frame.setLocationRelativeTo(null);
+        frame.add(new JScrollPane(tableClients));
+         */
         frame.setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if ("new order".equals(e.getActionCommand())) {
+
+        }
+        else if ("new service".equals(e.getActionCommand())) {
+            JOptionPane.showMessageDialog(frame, "new service");
+        }
     }
 
     public JMenuBar createMenuBar() {
@@ -91,14 +96,44 @@ public class MainForm {
         return menuBar;
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if ("new order".equals(e.getActionCommand())) {
-
-        }
-        else if ("new service".equals(e.getActionCommand())) {
-            JOptionPane.showMessageDialog(frame, "new service");
-        }
+    public JFrame createMainFrame(String title) {
+        JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(1200, 720));
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+        return frame;
     }
 
+    public void simplePanels(JFrame frame) {
+        JPanel panel1 = new JPanel();
+        JLabel label1 = new JLabel("label1");
+        label1.setHorizontalAlignment(JLabel.CENTER);
+        panel1.add(label1);
+        JPanel inPanel = new JPanel();
+        JLabel label2 = new JLabel("label2");
+        label1.setHorizontalAlignment(JLabel.CENTER);
+        inPanel.add(label2);
+        panel1.add(inPanel);
+        frame.getContentPane().add(panel1);
+    }
+
+    public void addTables(JFrame frame) {
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayout(1, 1));
+
+        JScrollPane scrollPane = new JScrollPane();
+        ClientTableModel model = new ClientTableModel(clients);
+        tableClients = new JTable(model);
+        scrollPane.setViewportView(tableClients);
+
+        panel1.add(scrollPane);
+        tabbedPane.addTab("Clients", panel1);
+        //tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        frame.add(tabbedPane, BorderLayout.CENTER);
+    }
 
 }
