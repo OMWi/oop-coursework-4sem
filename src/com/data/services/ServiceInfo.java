@@ -6,6 +6,18 @@ public class ServiceInfo implements Serializable{
     private String name;
     private double price;
 
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double price() {
+        return price;
+    }
+
     public ServiceInfo(String name, String type, double price) {
         this.name = name;
         this.type = type;

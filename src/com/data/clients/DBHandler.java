@@ -1,34 +1,50 @@
 package com.data.clients;
 import com.data.clients.ClientInfo;
+import com.data.orders.OrderInfo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class DBHandler {
-    private  String tableName = "clients";
-    private String dbName = "oop_4sem";
-    private String url = "jdbc:mysql://localhost:3306/oop_4sem";
-    private String user = "root";
-    private String password = "573458";
+    private  String tableName;
+    private String dbName;
+    private String url;
+    private String user;
+    private String password;
     private Connection connection;
     private Statement statement;
 
-    public ArrayList<ClientInfo> read() throws Exception {
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public ArrayList<ClientInfo> readClients() throws Exception {
         ArrayList<ClientInfo> list = new ArrayList<>();
         try {
-            ResultSet resultSet = statement.executeQuery("select * from " + tableName);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
             while (resultSet.next()) {
                 list.add(new ClientInfo(resultSet.getString(2), resultSet.getString(3),
                         resultSet.getString(4), resultSet.getInt(5)));
             }
         }
-        catch (Exception e) {
-            System.out.println(e);
-        }
+        catch (Exception e) { }
+        return list;
+    }
 
+    public ArrayList<OrderInfo> readOrders() throws Exception {
+        ArrayList<OrderInfo> list = new ArrayList<>();
+        try {
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+            while (resultSet.next()) {
+                list.add(new OrderInfo(resultSet.getString(2), resultSet.getString(3),
+                        resultSet.getString(4), resultSet.getDate(5), resultSet.getDate(6)));
+            }
+        }
+        catch (Exception e) { }
         return list;
     }
 
@@ -54,8 +70,5 @@ public class DBHandler {
         this.connection = DriverManager.getConnection(url, user, password);
         this.statement = this.connection.createStatement();
     }
-
-
-
 
 }

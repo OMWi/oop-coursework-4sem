@@ -22,11 +22,13 @@ public class MainForm {
     private JPanel panelMain;
     private JDesktopPane desktopPane;
     private JTable tableClients;
+    private JTable tableOrders;
     private JMenuBar menuBar;
     private JFrame frame;
 
     private ArrayList<ClientInfo> clients;
     private ArrayList<ServiceInfo> services;
+    private ArrayList<OrderInfo> orders;
     private Serializer serializer;
     private DBHandler dbHandler;
 
@@ -39,8 +41,6 @@ public class MainForm {
 
     public static void main(String[] args) {
         new MainForm();
-        //OrderInfo order = new OrderInfo(new ServiceInfo("service", "service_type", 10),
-        //        new ClientInfo("name", "name", "name"), LocalDate.now());
     }
 
 
@@ -52,27 +52,41 @@ public class MainForm {
         } catch (Exception e) { }
         try {
             dbHandler = new DBHandler(dbName, tableName, url, user, password);
-            clients = dbHandler.read();
+            clients = dbHandler.readClients();
+            dbHandler.setTableName("orders");
+            orders = dbHandler.readOrders();
         } catch (Exception e) { }
 
         //creating mainFrame
         frame = createMainFrame("Химчистка");
         frame.setJMenuBar(createMenuBar());
         addTables(frame);
-        /*
-        ClientTableModel model = new ClientTableModel(clients);
-        tableClients = new JTable(model);
-        frame.add(new JScrollPane(tableClients));
-         */
+
+
         frame.setVisible(true);
     }
 
     public void actionPerformed(ActionEvent e) {
         if ("new order".equals(e.getActionCommand())) {
+            JFrame frameAdd = new JFrame();
+            frameAdd.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frameAdd.setMinimumSize(new Dimension(400, 400));
+            frameAdd.setLocationRelativeTo(frame);
 
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(1, 1));
+            JEditorPane editorPane = new JEditorPane();
+
+
+
+
+            frameAdd.setVisible(true);
         }
         else if ("new service".equals(e.getActionCommand())) {
             JOptionPane.showMessageDialog(frame, "new service");
+        }
+        else if ("new client".equals(e.getActionCommand())) {
+
         }
     }
 
@@ -92,6 +106,11 @@ public class MainForm {
         newServiceMenuItem.addActionListener(this::actionPerformed);
         menuOptions.add(newServiceMenuItem);
 
+        JMenuItem newClientMenuItem = new JMenuItem("New client");
+        newClientMenuItem.setActionCommand("new client");
+        newClientMenuItem.addActionListener(this::actionPerformed);
+        menuOptions.add(newClientMenuItem);
+
         menuBar.add(menuOptions);
         return menuBar;
     }
@@ -105,33 +124,32 @@ public class MainForm {
         return frame;
     }
 
-    public void simplePanels(JFrame frame) {
-        JPanel panel1 = new JPanel();
-        JLabel label1 = new JLabel("label1");
-        label1.setHorizontalAlignment(JLabel.CENTER);
-        panel1.add(label1);
-        JPanel inPanel = new JPanel();
-        JLabel label2 = new JLabel("label2");
-        label1.setHorizontalAlignment(JLabel.CENTER);
-        inPanel.add(label2);
-        panel1.add(inPanel);
-        frame.getContentPane().add(panel1);
-    }
-
     public void addTables(JFrame frame) {
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayout(1, 1));
+        JPanel panelClients = new JPanel();
+        panelClients.setLayout(new GridLayout(1, 1));
 
-        JScrollPane scrollPane = new JScrollPane();
-        ClientTableModel model = new ClientTableModel(clients);
-        tableClients = new JTable(model);
-        scrollPane.setViewportView(tableClients);
+        JScrollPane scrollPaneClients = new JScrollPane();
+        ClientTableModel modelClients = new ClientTableModel(clients);
+        tableClients = new JTable(modelClients);
+        scrollPaneClients.setViewportView(tableClients);
 
-        panel1.add(scrollPane);
-        tabbedPane.addTab("Clients", panel1);
+        panelClients.add(scrollPaneClients);
+        tabbedPane.addTab("Clients", panelClients);
         //tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        JPanel panelOrders = new JPanel();
+        panelOrders.setLayout(new GridLayout(1, 1));
+
+        JScrollPane scrollPaneOrders = new JScrollPane();
+        OrderTableModel modelOrders = new OrderTableModel(orders);
+        tableOrders = new JTable(modelOrders);
+        scrollPaneOrders.setViewportView(tableOrders);
+
+        panelOrders.add(scrollPaneOrders);
+        tabbedPane.addTab("Orders", panelOrders);
+
 
         frame.add(tabbedPane, BorderLayout.CENTER);
     }

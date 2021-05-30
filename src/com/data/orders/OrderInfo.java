@@ -3,39 +3,53 @@ package com.data.orders;
 import com.data.clients.ClientInfo;
 import com.data.services.ServiceInfo;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class OrderInfo {
-    private ServiceInfo service;
-    private ClientInfo client;
-    private LocalDate receiptDate;
-    private LocalDate returnDate;
+    private String clientFirstName;
+    private String clientSecondName;
+    private String serviceName;
+    private Date receiptDate;
+    private Date returnDate;
 
-    public ServiceInfo getService() {
-        return service;
+    public String getClientFirstName() {
+        return clientFirstName;
     }
 
-    public ClientInfo getClient() {
-        return client;
+    public String getClientSecondName() {
+        return clientSecondName;
     }
 
-    public LocalDate getReceiptDate() {
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public Date getReceiptDate() {
         return receiptDate;
     }
 
-    public LocalDate getReturnDate() {
+    public Date getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(LocalDate returnDate) {
+    public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
     }
 
-    public OrderInfo(ServiceInfo service, ClientInfo client, LocalDate receiptDate) {
-        this.service = service;
-        this.client = client;
+    public OrderInfo(String clientFirstName, String clientSecondName, String serviceName, Date receiptDate) {
+        this.clientFirstName = clientFirstName;
+        this.clientSecondName = clientSecondName;
+        this.serviceName = serviceName;
         this.receiptDate = receiptDate;
-        this.returnDate = LocalDate.MAX;
-        System.out.println(returnDate);
+        this.returnDate = Date.valueOf(LocalDate.MAX);
+    }
+
+    public OrderInfo(String clientFirstName, String clientSecondName, String serviceName, Date receiptDate, Date returnDate) {
+        this.clientFirstName = clientFirstName;
+        this.clientSecondName = clientSecondName;
+        this.serviceName = serviceName;
+        this.receiptDate = receiptDate;
+        this.returnDate = returnDate;
     }
 }
