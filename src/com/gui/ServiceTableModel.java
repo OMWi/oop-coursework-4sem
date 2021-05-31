@@ -1,26 +1,27 @@
 package com.gui;
 
-import com.data.ClientInfo;
+import com.data.ServiceInfo;
 
 import javax.swing.table.AbstractTableModel;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientTableModel extends AbstractTableModel {
-    private List<ClientInfo> clients;
+public class ServiceTableModel extends AbstractTableModel {
+    private List<ServiceInfo> services;
 
-    public ClientTableModel(List<ClientInfo> clients) {
-        this.clients = new ArrayList<>(clients);
+    public ServiceTableModel(List<ServiceInfo> services) {
+        this.services = new ArrayList<>(services);
     }
 
     @Override
     public int getRowCount() {
-        return clients.size();
+        return services.size();
     }
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -28,16 +29,13 @@ public class ClientTableModel extends AbstractTableModel {
         String name = "Unknown";
         switch (column) {
             case 0:
-                name = "First name";
+                name = "Service type";
                 break;
             case 1:
-                name = "Second name";
+                name = "Service name";
                 break;
             case 2:
-                name = "Third name";
-                break;
-            case 3:
-                name = "Visits";
+                name = "Price";
                 break;
         }
         return name;
@@ -47,29 +45,25 @@ public class ClientTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         Class type = String.class;
         switch (columnIndex) {
-            case 3:
-                type = Integer.class;
-                break;
+            case 2:
+                type = double.class;
         }
         return type;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        ClientInfo client = clients.get(rowIndex);
+        ServiceInfo service = services.get(rowIndex);
         Object value = null;
         switch (columnIndex) {
             case 0:
-                value = client.getFirstName();
+                value = service.getType();
                 break;
             case 1:
-                value = client.getSecondName();
+                value = service.getName();
                 break;
             case 2:
-                value = client.getThirdName();
-                break;
-            case 3:
-                value = client.getVisits();
+                value = service.getType();
                 break;
         }
         return value;

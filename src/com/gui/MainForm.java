@@ -1,20 +1,16 @@
 package com.gui;
 
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.data.clients.ClientInfo;
-import com.data.clients.DBHandler;
-import com.data.orders.OrderInfo;
-import com.data.services.Serializer;
-import com.data.services.ServiceInfo;
+import com.data.ClientInfo;
+import com.data.DBHandler;
+import com.data.OrderInfo;
+import com.data.Serializer;
+import com.data.ServiceInfo;
 
 
 
@@ -256,7 +252,7 @@ public class MainForm {
         JTabbedPane tabbedPane = new JTabbedPane();
 
         JPanel panelClients = new JPanel();
-        panelClients.setLayout(new GridLayout(1, 1));
+        panelClients.setLayout(new GridLayout());
         JScrollPane scrollPaneClients = new JScrollPane();
         ClientTableModel modelClients = new ClientTableModel(clients);
         tableClients = new JTable(modelClients);
@@ -265,7 +261,7 @@ public class MainForm {
         tabbedPane.addTab("Clients", panelClients);
 
         JPanel panelOrders = new JPanel();
-        panelOrders.setLayout(new GridLayout(1, 1));
+        panelOrders.setLayout(new GridLayout());
         JScrollPane scrollPaneOrders = new JScrollPane();
         OrderTableModel modelOrders = new OrderTableModel(orders);
         tableOrders = new JTable(modelOrders);
@@ -273,14 +269,16 @@ public class MainForm {
         panelOrders.add(scrollPaneOrders);
         tabbedPane.addTab("Orders", panelOrders);
 
+        /*
         JPanel panelServices = new JPanel();
-        panelServices.setLayout(new GridLayout(1, 1));
+        panelServices.setLayout(new GridLayout());
         JScrollPane scrollPaneServices = new JScrollPane();
-        OrderTableModel modelServices = new OrderTableModel(orders);
+        ServiceTableModel modelServices = new ServiceTableModel(services);
         tableServices = new JTable(modelServices);
         scrollPaneServices.setViewportView(tableServices);
         panelServices.add(scrollPaneServices);
-        tabbedPane.addTab("Orders", panelServices);
+        tabbedPane.addTab("Services", panelServices);
+        */
 
         frame.add(tabbedPane, BorderLayout.CENTER);
     }

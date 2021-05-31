@@ -1,7 +1,4 @@
-package com.data.orders;
-
-import com.data.clients.ClientInfo;
-import com.data.services.ServiceInfo;
+package com.data;
 
 import java.sql.Date;
 import java.time.LocalDate;

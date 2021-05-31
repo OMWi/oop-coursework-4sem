@@ -1,6 +1,4 @@
-package com.data.clients;
-
-import java.lang.ref.Cleaner;
+package com.data;
 
 public class ClientInfo {
     private String firstName;

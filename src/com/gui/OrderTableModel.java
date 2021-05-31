@@ -1,6 +1,6 @@
 package com.gui;
 
-import com.data.orders.OrderInfo;
+import com.data.OrderInfo;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.LocalDate;
