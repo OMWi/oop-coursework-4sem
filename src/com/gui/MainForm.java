@@ -23,6 +23,7 @@ public class MainForm {
     private JDesktopPane desktopPane;
     private JTable tableClients;
     private JTable tableOrders;
+    private JTable tableServices;
     private JMenuBar menuBar;
     private JFrame frame;
 
@@ -68,25 +69,16 @@ public class MainForm {
 
     public void actionPerformed(ActionEvent e) {
         if ("new order".equals(e.getActionCommand())) {
-            JFrame frameAdd = new JFrame();
-            frameAdd.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frameAdd.setMinimumSize(new Dimension(400, 400));
-            frameAdd.setLocationRelativeTo(frame);
-
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(1, 1));
-            JEditorPane editorPane = new JEditorPane();
-
-
-
-
-            frameAdd.setVisible(true);
+            JFrame orderFrame = createAddOrderFrame();
+            orderFrame.setVisible(true);
         }
         else if ("new service".equals(e.getActionCommand())) {
-            JOptionPane.showMessageDialog(frame, "new service");
+            JFrame serviceFrame = createAddService();
+            serviceFrame.setVisible(true);
         }
         else if ("new client".equals(e.getActionCommand())) {
-
+            JFrame clientFrame = createAddClientFrame();
+            clientFrame.setVisible(true);
         }
     }
 
@@ -124,32 +116,171 @@ public class MainForm {
         return frame;
     }
 
+    public JFrame createAddClientFrame() {
+        JFrame clientFrame = new JFrame();
+        clientFrame.setResizable(false);
+        clientFrame.setAlwaysOnTop(true);
+        //clientFrame.setPreferredSize(new Dimension(400, 220));
+        clientFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        clientFrame.setLocationRelativeTo(frame);
+
+        JPanel clientPanel = new JPanel();
+        clientFrame.setContentPane(clientPanel);
+        clientPanel.setLayout(new BorderLayout(0, 3));
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2, 0, 2));
+
+        inputPanel.add(new JLabel("First name", JLabel.CENTER));
+        JTextField firstNameText = new JTextField();
+        inputPanel.add(firstNameText);
+        inputPanel.add(new JLabel("Second name", JLabel.CENTER));
+        JTextField secondNameText = new JTextField();
+        inputPanel.add(secondNameText);
+        inputPanel.add(new JLabel("Third name", JLabel.CENTER));
+        JTextField thirdNameText = new JTextField();
+        inputPanel.add(thirdNameText);
+        inputPanel.add(new JLabel("Visits", JLabel.CENTER));
+        JTextField visitsText = new JTextField();
+        inputPanel.add(visitsText);
+
+        for (Component c : inputPanel.getComponents()) {
+            c.setFont(new Font("Arial", Font.BOLD, 16));
+        }
+
+        JButton addButton = new JButton("Add");
+        addButton.setPreferredSize(new Dimension(320, 60));
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //some code
+            }
+        });
+
+        clientPanel.add(inputPanel, BorderLayout.NORTH);
+        clientPanel.add(addButton, BorderLayout.SOUTH);
+        clientFrame.pack();
+        return clientFrame;
+    }
+
+    public JFrame createAddOrderFrame() {
+        JFrame orderFrame = new JFrame();
+        orderFrame.setResizable(false);
+        orderFrame.setAlwaysOnTop(true);
+        orderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        orderFrame.setLocationRelativeTo(frame);
+
+        JPanel orderPanel = new JPanel();
+        orderFrame.setContentPane(orderPanel);
+        orderPanel.setLayout(new BorderLayout(0, 3));
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2, 0, 2));
+
+        inputPanel.add(new JLabel("Client first name", JLabel.CENTER));
+        JTextField firstNameText = new JTextField();
+        inputPanel.add(firstNameText);
+        inputPanel.add(new JLabel("Client second name", JLabel.CENTER));
+        JTextField secondNameText = new JTextField();
+        inputPanel.add(secondNameText);
+        inputPanel.add(new JLabel("Service name", JLabel.CENTER));
+        JTextField serviceNameText = new JTextField();
+        inputPanel.add(serviceNameText);
+        inputPanel.add(new JLabel("Receipt date", JLabel.CENTER));
+        JTextField dateText = new JTextField();
+        inputPanel.add(dateText);
+
+        for (Component c : inputPanel.getComponents()) {
+            c.setFont(new Font("Arial", Font.BOLD, 16));
+        }
+
+        JButton addButton = new JButton("Add");
+        addButton.setPreferredSize(new Dimension(320, 60));
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //some code
+            }
+        });
+
+        orderPanel.add(inputPanel, BorderLayout.NORTH);
+        orderPanel.add(addButton, BorderLayout.SOUTH);
+        orderFrame.pack();
+        return orderFrame;
+    }
+
+    public JFrame createAddService() {
+        JFrame serviceFrame = new JFrame();
+        serviceFrame.setResizable(false);
+        serviceFrame.setAlwaysOnTop(true);
+        serviceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        serviceFrame.setLocationRelativeTo(frame);
+
+        JPanel servicePanel = new JPanel();
+        serviceFrame.setContentPane(servicePanel);
+        servicePanel.setLayout(new BorderLayout(0, 3));
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(3, 2, 0, 2));
+
+        inputPanel.add(new JLabel("Service type", JLabel.CENTER));
+        JTextField typeText = new JTextField();
+        inputPanel.add(typeText);
+        inputPanel.add(new JLabel("Service name", JLabel.CENTER));
+        JTextField nameText = new JTextField();
+        inputPanel.add(nameText);
+        inputPanel.add(new JLabel("Service name", JLabel.CENTER));
+        JTextField priceText = new JTextField();
+        inputPanel.add(priceText);
+
+        for (Component c : inputPanel.getComponents()) {
+            c.setFont(new Font("Arial", Font.BOLD, 16));
+        }
+
+        JButton addButton = new JButton("Add");
+        addButton.setPreferredSize(new Dimension(320, 60));
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //some code
+            }
+        });
+
+        servicePanel.add(inputPanel, BorderLayout.NORTH);
+        servicePanel.add(addButton, BorderLayout.SOUTH);
+        serviceFrame.pack();
+        return serviceFrame;
+    }
+
     public void addTables(JFrame frame) {
         JTabbedPane tabbedPane = new JTabbedPane();
 
         JPanel panelClients = new JPanel();
         panelClients.setLayout(new GridLayout(1, 1));
-
         JScrollPane scrollPaneClients = new JScrollPane();
         ClientTableModel modelClients = new ClientTableModel(clients);
         tableClients = new JTable(modelClients);
         scrollPaneClients.setViewportView(tableClients);
-
         panelClients.add(scrollPaneClients);
         tabbedPane.addTab("Clients", panelClients);
-        //tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         JPanel panelOrders = new JPanel();
         panelOrders.setLayout(new GridLayout(1, 1));
-
         JScrollPane scrollPaneOrders = new JScrollPane();
         OrderTableModel modelOrders = new OrderTableModel(orders);
         tableOrders = new JTable(modelOrders);
         scrollPaneOrders.setViewportView(tableOrders);
-
         panelOrders.add(scrollPaneOrders);
         tabbedPane.addTab("Orders", panelOrders);
 
+        JPanel panelServices = new JPanel();
+        panelServices.setLayout(new GridLayout(1, 1));
+        JScrollPane scrollPaneServices = new JScrollPane();
+        OrderTableModel modelServices = new OrderTableModel(orders);
+        tableServices = new JTable(modelServices);
+        scrollPaneServices.setViewportView(tableServices);
+        panelServices.add(scrollPaneServices);
+        tabbedPane.addTab("Orders", panelServices);
 
         frame.add(tabbedPane, BorderLayout.CENTER);
     }
