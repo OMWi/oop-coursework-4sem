@@ -29,13 +29,13 @@ public class OrderTableModel extends AbstractTableModel {
         String name = "Unknown";
         switch (column) {
             case 0:
-                name = "Client first name";
+                name = "Client id";
                 break;
             case 1:
-                name = "Client second name";
+                name = "Service id";
                 break;
             case 2:
-                name = "Service name";
+                name = "Price";
                 break;
             case 3:
                 name = "Receipt date";
@@ -49,8 +49,11 @@ public class OrderTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        Class type = String.class;
+        Class type = int.class;
         switch (columnIndex) {
+            case 2:
+                type = double.class;
+                break;
             case 3:
             case 4:
                 type = LocalDate.class;
@@ -65,13 +68,13 @@ public class OrderTableModel extends AbstractTableModel {
         Object value = null;
         switch (columnIndex) {
             case 0:
-                value = order.getClientFirstName();
+                value = order.getClientID();
                 break;
             case 1:
-                value = order.getClientSecondName();
+                value = order.getServiceID();
                 break;
             case 2:
-                value = order.getServiceName();
+                value = order.getPrice();
                 break;
             case 3:
                 value = order.getReceiptDate();

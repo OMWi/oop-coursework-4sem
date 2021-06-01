@@ -1,32 +1,32 @@
 package com.data;
 
 import java.sql.Date;
-import java.time.LocalDate;
 
 public class OrderInfo {
     private static int globalID = 0;
-    private int ID;
+    private double discount = 0.03;
 
-    private String clientFirstName;
-    private String clientSecondName;
-    private String serviceName;
+    private int id;
+    private int clientID;
+    private int serviceID;
+    private double price;
     private Date receiptDate;
     private Date returnDate;
 
     public int getID() {
-        return ID;
+        return id;
     }
 
-    public String getClientFirstName() {
-        return clientFirstName;
+    public int getClientID() {
+        return clientID;
     }
 
-    public String getClientSecondName() {
-        return clientSecondName;
+    public int getServiceID() {
+        return serviceID;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public double getPrice() {
+        return price;
     }
 
     public Date getReceiptDate() {
@@ -41,20 +41,22 @@ public class OrderInfo {
         this.returnDate = returnDate;
     }
 
-    public OrderInfo(String clientFirstName, String clientSecondName, String serviceName, Date receiptDate) {
-        ID = globalID++;
-        this.clientFirstName = clientFirstName;
-        this.clientSecondName = clientSecondName;
-        this.serviceName = serviceName;
+    public OrderInfo(ClientInfo client, ServiceInfo service, Date receiptDate) {
+        id = globalID++;
+        this.clientID = client.getId();
+        this.serviceID = service.getId();
+        this.price = service.getPrice();
+        if (client.getVisits() > 2) {
+            this.price *= (1 - discount);
+        }
         this.receiptDate = receiptDate;
-        this.returnDate = Date.valueOf(LocalDate.MAX);
     }
 
-    public OrderInfo(String clientFirstName, String clientSecondName, String serviceName, Date receiptDate, Date returnDate) {
-        ID = globalID++;
-        this.clientFirstName = clientFirstName;
-        this.clientSecondName = clientSecondName;
-        this.serviceName = serviceName;
+    public OrderInfo(int clientID, int serviceID, double price, Date receiptDate, Date returnDate) {
+        id = globalID++;
+        this.clientID = clientID;
+        this.serviceID = serviceID;
+        this.price = price;
         this.receiptDate = receiptDate;
         this.returnDate = returnDate;
     }

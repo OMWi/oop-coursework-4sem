@@ -2,9 +2,15 @@ package com.data;
 
 import java.io.Serializable;
 public class ServiceInfo implements Serializable{
+    private static int globalID = 0;
+    private int id;
     private String type;
     private String name;
     private double price;
+
+    public int getId() {
+        return id;
+    }
 
     public String getType() {
         return type;
@@ -19,6 +25,7 @@ public class ServiceInfo implements Serializable{
     }
 
     public ServiceInfo(String type, String name, double price) {
+        this.id = globalID++;
         this.name = name;
         this.type = type;
         this.price = price;

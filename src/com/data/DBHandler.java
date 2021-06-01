@@ -25,8 +25,8 @@ public class DBHandler {
         ArrayList<OrderInfo> list = new ArrayList<>();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM orders;");
         while (resultSet.next()) {
-            list.add(new OrderInfo(resultSet.getString(2), resultSet.getString(3),
-                    resultSet.getString(4), resultSet.getDate(5), resultSet.getDate(6)));
+            list.add(new OrderInfo(resultSet.getInt(2), resultSet.getInt(3),
+                    resultSet.getDouble(4), resultSet.getDate(5), resultSet.getDate(6)));
         }
         return list;
     }
@@ -42,35 +42,20 @@ public class DBHandler {
     }
 
     public void addClient(ClientInfo client) throws  Exception {
-        statement.execute("INSERT INTO clients (firstName, secondName, thirdName, visits) VALUES "+ String.format("(\"%s\", \"%s\", \"%s\", %d);" ,
-                                client.getFirstName(), client.getSecondName(), client.getThirdName(), client.getVisits()));
+        statement.execute("INSERT INTO clients (id, firstName, secondName, thirdName, visits) VALUES "+ String.format("(%d, \"%s\", \"%s\", \"%s\", %d);" ,
+                                client.getId(), client.getFirstName(), client.getSecondName(), client.getThirdName(), client.getVisits()));
     }
 
     public void addOrder(OrderInfo order) throws Exception {
-        statement.execute("INSERT INTO orders (clientFirstName, clientSecondName, serviceName, receiptDate, returnDate) VALUES " +
-                String.format("(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");", order.getClientFirstName(), order.getClientSecondName(),
-                        order.getServiceName(), order.getReceiptDate().toString(), order.getReturnDate().toString()));
+        statement.execute("INSERT INTO orders (id, clientID, servicID, price, receiptDate) VALUES " +
+                String.format("(%d, %d, %d, %f, \"%s\");", order.getID(), order.getClientID(),
+                        order.getServiceID(), order.getPrice(), order.getReceiptDate().toString()));
     }
 
     public void addService(ServiceInfo service) throws Exception {
-        String comm = "INSERT INTO services (type, name, price) VALUES " +
-                String.format("(\"%s\", \"%s\", %s);", service.getType(), service.getName(), service.getPrice());
+        String comm = "INSERT INTO services (id, type, name, price) VALUES " +
+                String.format("(%d, \"%s\", \"%s\", %s);", service.getId(), service.getType(), service.getName(), service.getPrice());
         statement.execute(comm);
-    }
-
-    public void deleteClient(ClientInfo client) throws Exception {
-        statement.execute(String.format("DELETE FROM clients WHERE firstName=\"%s\" AND secondName=\"%s\" AND thirdName=\"%s\";",
-                client.getFirstName(), client.getSecondName(), client.getThirdName()));
-    }
-
-    public void deleteService(ServiceInfo service) throws Exception {
-        statement.execute(String.format("DELETE FROM services WHERE type=\"%s\" AND name=\"%s\" AND price=%f;",
-                service.getType(), service.getName(), service.getPrice()));
-    }
-
-    public void deleteOrder(OrderInfo order) throws Exception {
-        statement.execute(String.format("DELETE FROM orders WHERE clientFirstName=\"%s\" AND clientSecondName=\"%s\" AND serviceName=\"%s\"  AND receiptDate=\"%s\" AND returnDate=\"%s\";",
-                order.getClientFirstName(), order.getClientSecondName(), order.getServiceName(), order.getReceiptDate(), order.getReturnDate()));
     }
 
     public DBHandler(String url, String user, String password) throws Exception {

@@ -3,7 +3,6 @@ package com.gui;
 import com.data.ClientInfo;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClientTableModel extends AbstractTableModel {
@@ -20,7 +19,7 @@ public class ClientTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -28,15 +27,18 @@ public class ClientTableModel extends AbstractTableModel {
         String name = "Unknown";
         switch (column) {
             case 0:
-                name = "First name";
+                name = "id";
                 break;
             case 1:
-                name = "Second name";
+                name = "First name";
                 break;
             case 2:
-                name = "Third name";
+                name = "Second name";
                 break;
             case 3:
+                name = "Third name";
+                break;
+            case 4:
                 name = "Visits";
                 break;
         }
@@ -47,7 +49,8 @@ public class ClientTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         Class type = String.class;
         switch (columnIndex) {
-            case 3:
+            case 0:
+            case 4:
                 type = Integer.class;
                 break;
         }
@@ -60,15 +63,18 @@ public class ClientTableModel extends AbstractTableModel {
         Object value = null;
         switch (columnIndex) {
             case 0:
-                value = client.getFirstName();
+                value = client.getId();
                 break;
             case 1:
-                value = client.getSecondName();
+                value = client.getFirstName();
                 break;
             case 2:
-                value = client.getThirdName();
+                value = client.getSecondName();
                 break;
             case 3:
+                value = client.getThirdName();
+                break;
+            case 4:
                 value = client.getVisits();
                 break;
         }

@@ -18,7 +18,6 @@ import com.data.ServiceInfo;
 
 public class MainForm {
     private JPanel panelMain;
-    private JDesktopPane desktopPane;
     private JTable tableClients;
     private ClientTableModel modelClients;
     private JTable tableOrders;
@@ -35,10 +34,6 @@ public class MainForm {
 
     private String configPath = "config";
 
-    private String url = "jdbc:mysql://localhost:3306/oop_4sem";
-    private String user = "root";
-    private String password = "573458";
-
     public static void main(String[] args) {
         new MainForm();
     }
@@ -50,7 +45,7 @@ public class MainForm {
             config = (ConfigModel) configProvider.load();
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Failed to load configs");
+            JOptionPane.showMessageDialog(null, "Failed to load configuration file");
             return;
         }
 
@@ -78,18 +73,6 @@ public class MainForm {
         }
         else if ("new client".equals(e.getActionCommand())) {
             JFrame clientFrame = createAddClientFrame();
-            clientFrame.setVisible(true);
-        }
-        else if ("delete order".equals(e.getActionCommand())) {
-            JFrame orderFrame = createDeleteOrderFrame();
-            orderFrame.setVisible(true);
-        }
-        else if ("delete service".equals(e.getActionCommand())) {
-            JFrame serviceFrame = createDeleteServiceFrame();
-            serviceFrame.setVisible(true);
-        }
-        else if ("delete client".equals(e.getActionCommand())) {
-            JFrame clientFrame = createDeleteClientFrame();
             clientFrame.setVisible(true);
         }
     }
@@ -304,21 +287,6 @@ public class MainForm {
         servicePanel.add(addButton, BorderLayout.SOUTH);
         serviceFrame.pack();
         return serviceFrame;
-    }
-
-    public JFrame createDeleteClientFrame() {
-        JFrame frame = new JFrame();
-        return frame;
-    }
-
-    public JFrame createDeleteOrderFrame() {
-        JFrame frame = new JFrame();
-        return frame;
-    }
-
-    public JFrame createDeleteServiceFrame() {
-        JFrame frame = new JFrame();
-        return frame;
     }
 
     public JTabbedPane createTabbedPane() {
