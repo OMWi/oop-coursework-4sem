@@ -7,63 +7,73 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class DBHandler {
-    private  String tableName;
-    private String dbName;
-    private String url;
-    private String user;
-    private String password;
     private Connection connection;
     private Statement statement;
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
 
     public ArrayList<ClientInfo> readClients() throws Exception {
         ArrayList<ClientInfo> list = new ArrayList<>();
-        try {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
-            while (resultSet.next()) {
-                list.add(new ClientInfo(resultSet.getString(2), resultSet.getString(3),
-                        resultSet.getString(4), resultSet.getInt(5)));
-            }
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM clients");
+        while (resultSet.next()) {
+            list.add(new ClientInfo(resultSet.getString(2), resultSet.getString(3),
+                    resultSet.getString(4), resultSet.getInt(5)));
         }
-        catch (Exception e) { }
         return list;
     }
 
     public ArrayList<OrderInfo> readOrders() throws Exception {
         ArrayList<OrderInfo> list = new ArrayList<>();
-        try {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
-            while (resultSet.next()) {
-                list.add(new OrderInfo(resultSet.getString(2), resultSet.getString(3),
-                        resultSet.getString(4), resultSet.getDate(5), resultSet.getDate(6)));
-            }
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM orders;");
+        while (resultSet.next()) {
+            list.add(new OrderInfo(resultSet.getString(2), resultSet.getString(3),
+                    resultSet.getString(4), resultSet.getDate(5), resultSet.getDate(6)));
         }
-        catch (Exception e) { }
         return list;
     }
 
-    public void add(ClientInfo client) throws  Exception {
-        statement.execute("INSERT INTO " + tableName + " (firstName, secondName, thirdName, visits) VALUES "+ String.format("(\"%s\", \"%s\", \"%s\", %d);" ,
+    public ArrayList<ServiceInfo> readServices() throws Exception {
+        ArrayList<ServiceInfo> list = new ArrayList<>();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM services;");
+        while (resultSet.next()) {
+            list.add(new ServiceInfo(resultSet.getString(2), resultSet.getString(3),
+                    resultSet.getDouble(4)));
+        }
+        return list;
+    }
+
+    public void addClient(ClientInfo client) throws  Exception {
+        statement.execute("INSERT INTO clients (firstName, secondName, thirdName, visits) VALUES "+ String.format("(\"%s\", \"%s\", \"%s\", %d);" ,
                                 client.getFirstName(), client.getSecondName(), client.getThirdName(), client.getVisits()));
     }
 
-    public void delete(int id) throws Exception {
-        statement.execute("DELETE FROM " + tableName + " WHERE id=" + id);
+    public void addOrder(OrderInfo order) throws Exception {
+        statement.execute("INSERT INTO orders (clientFirstName, clientSecondName, serviceName, receiptDate, returnDate) VALUES " +
+                String.format("(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");", order.getClientFirstName(), order.getClientSecondName(),
+                        order.getServiceName(), order.getReceiptDate().toString(), order.getReturnDate().toString()));
     }
 
-    public void delete(ClientInfo client) throws Exception {
-        statement.execute("DELETE FROM " + dbName + "WHERE ");
+    public void addService(ServiceInfo service) throws Exception {
+        String comm = "INSERT INTO services (type, name, price) VALUES " +
+                String.format("(\"%s\", \"%s\", %s);", service.getType(), service.getName(), service.getPrice());
+        statement.execute(comm);
     }
 
-    public DBHandler(String dbName, String tableName, String url, String user, String password) throws Exception {
-        this.dbName = dbName;
-        this.tableName = tableName;
-        this.url = url;
-        this.user = user;
-        this.password = password;
+    public void deleteClient(ClientInfo client) throws Exception {
+        statement.execute(String.format("DELETE FROM clients WHERE firstName=\"%s\" AND secondName=\"%s\" AND thirdName=\"%s\";",
+                client.getFirstName(), client.getSecondName(), client.getThirdName()));
+    }
+
+    public void deleteService(ServiceInfo service) throws Exception {
+        statement.execute(String.format("DELETE FROM services WHERE type=\"%s\" AND name=\"%s\" AND price=%f;",
+                service.getType(), service.getName(), service.getPrice()));
+    }
+
+    public void deleteOrder(OrderInfo order) throws Exception {
+        statement.execute(String.format("DELETE FROM orders WHERE clientFirstName=\"%s\" AND clientSecondName=\"%s\" AND serviceName=\"%s\"  AND receiptDate=\"%s\" AND returnDate=\"%s\";",
+                order.getClientFirstName(), order.getClientSecondName(), order.getServiceName(), order.getReceiptDate(), order.getReturnDate()));
+    }
+
+    public DBHandler(String url, String user, String password) throws Exception {
         this.connection = DriverManager.getConnection(url, user, password);
         this.statement = this.connection.createStatement();
     }

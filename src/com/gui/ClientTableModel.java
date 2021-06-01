@@ -10,7 +10,7 @@ public class ClientTableModel extends AbstractTableModel {
     private List<ClientInfo> clients;
 
     public ClientTableModel(List<ClientInfo> clients) {
-        this.clients = new ArrayList<>(clients);
+        this.clients = clients;
     }
 
     @Override

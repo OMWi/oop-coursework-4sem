@@ -14,11 +14,11 @@ public class ServiceInfo implements Serializable{
         return name;
     }
 
-    public double price() {
+    public double getPrice() {
         return price;
     }
 
-    public ServiceInfo(String name, String type, double price) {
+    public ServiceInfo(String type, String name, double price) {
         this.name = name;
         this.type = type;
         this.price = price;

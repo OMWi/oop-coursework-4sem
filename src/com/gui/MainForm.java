@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import com.data.ClientInfo;
@@ -18,20 +19,19 @@ public class MainForm {
     private JPanel panelMain;
     private JDesktopPane desktopPane;
     private JTable tableClients;
+    private ClientTableModel modelClients;
     private JTable tableOrders;
+    private OrderTableModel modelOrders;
     private JTable tableServices;
+    private ServiceTableModel modelServices;
     private JMenuBar menuBar;
     private JFrame frame;
 
     private ArrayList<ClientInfo> clients;
     private ArrayList<ServiceInfo> services;
     private ArrayList<OrderInfo> orders;
-    private Serializer serializer;
     private DBHandler dbHandler;
 
-    private String serviceFilePath = "services";
-    private String tableName = "clients";
-    private String dbName = "oop_4sem";
     private String url = "jdbc:mysql://localhost:3306/oop_4sem";
     private String user = "root";
     private String password = "573458";
@@ -40,21 +40,16 @@ public class MainForm {
         new MainForm();
     }
 
-
     public MainForm() {
         //reading data
         try {
-            serializer = new Serializer();
-            services = (ArrayList<ServiceInfo>) serializer.load(serviceFilePath);
-        } catch (Exception e) { }
-        try {
-            dbHandler = new DBHandler(dbName, tableName, url, user, password);
+            dbHandler = new DBHandler(url, user, password);
             clients = dbHandler.readClients();
-            dbHandler.setTableName("orders");
             orders = dbHandler.readOrders();
+            services = dbHandler.readServices();
         } catch (Exception e) { }
 
-        //creating mainFrame
+
         frame = createMainFrame("Химчистка");
         frame.setJMenuBar(createMenuBar());
         addTables(frame);
@@ -76,30 +71,59 @@ public class MainForm {
             JFrame clientFrame = createAddClientFrame();
             clientFrame.setVisible(true);
         }
+        else if ("delete order".equals(e.getActionCommand())) {
+            JFrame orderFrame = createDeleteOrderFrame();
+            orderFrame.setVisible(true);
+        }
+        else if ("delete service".equals(e.getActionCommand())) {
+            JFrame serviceFrame = createDeleteServiceFrame();
+            serviceFrame.setVisible(true);
+        }
+        else if ("delete client".equals(e.getActionCommand())) {
+            JFrame clientFrame = createDeleteClientFrame();
+            clientFrame.setVisible(true);
+        }
     }
 
     public JMenuBar createMenuBar() {
         // todo: add mnemonics
         menuBar = new JMenuBar();
-        JMenu menuOptions = new JMenu("Options");
-        //menuOptions.setMnemonic(KeyEvent.VK_O);
-        // menu.getAccessibleContext().setAccessibleDescription("Options");
+        JMenu menuNew = new JMenu("New");
+        //menuNew.setMnemonic(KeyEvent.VK_N);
         JMenuItem newOrderMenuItem = new JMenuItem("New order...");
         newOrderMenuItem.setActionCommand("new order");
         newOrderMenuItem.addActionListener(this::actionPerformed);
-        menuOptions.add(newOrderMenuItem);
+        menuNew.add(newOrderMenuItem);
 
         JMenuItem newServiceMenuItem = new JMenuItem("New service...");
         newServiceMenuItem.setActionCommand("new service");
         newServiceMenuItem.addActionListener(this::actionPerformed);
-        menuOptions.add(newServiceMenuItem);
+        menuNew.add(newServiceMenuItem);
 
         JMenuItem newClientMenuItem = new JMenuItem("New client");
         newClientMenuItem.setActionCommand("new client");
         newClientMenuItem.addActionListener(this::actionPerformed);
-        menuOptions.add(newClientMenuItem);
+        menuNew.add(newClientMenuItem);
 
-        menuBar.add(menuOptions);
+        JMenu menuDelete = new JMenu("Delete");
+        //menuDelete.setMnemonic(KeyEvent.VK_D);
+        JMenuItem deleteOrderMenuItem = new JMenuItem("Delete order...");
+        deleteOrderMenuItem.setActionCommand("delete order");
+        deleteOrderMenuItem.addActionListener(this::actionPerformed);
+        menuDelete.add(deleteOrderMenuItem);
+
+        JMenuItem deleteServiceMenuItem = new JMenuItem("Delete service...");
+        deleteServiceMenuItem.setActionCommand("delete service");
+        deleteServiceMenuItem.addActionListener(this::actionPerformed);
+        menuDelete.add(deleteServiceMenuItem);
+
+        JMenuItem deleteClientMenuItem = new JMenuItem("Delete client");
+        deleteClientMenuItem.setActionCommand("delete client");
+        deleteClientMenuItem.addActionListener(this::actionPerformed);
+        menuDelete.add(deleteClientMenuItem);
+
+        menuBar.add(menuNew);
+        menuBar.add(menuDelete);
         return menuBar;
     }
 
@@ -116,7 +140,6 @@ public class MainForm {
         JFrame clientFrame = new JFrame();
         clientFrame.setResizable(false);
         clientFrame.setAlwaysOnTop(true);
-        //clientFrame.setPreferredSize(new Dimension(400, 220));
         clientFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         clientFrame.setLocationRelativeTo(frame);
 
@@ -125,7 +148,7 @@ public class MainForm {
         clientPanel.setLayout(new BorderLayout(0, 3));
 
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(4, 2, 0, 2));
+        inputPanel.setLayout(new GridLayout(3, 2, 0, 2));
 
         inputPanel.add(new JLabel("First name", JLabel.CENTER));
         JTextField firstNameText = new JTextField();
@@ -136,9 +159,6 @@ public class MainForm {
         inputPanel.add(new JLabel("Third name", JLabel.CENTER));
         JTextField thirdNameText = new JTextField();
         inputPanel.add(thirdNameText);
-        inputPanel.add(new JLabel("Visits", JLabel.CENTER));
-        JTextField visitsText = new JTextField();
-        inputPanel.add(visitsText);
 
         for (Component c : inputPanel.getComponents()) {
             c.setFont(new Font("Arial", Font.BOLD, 16));
@@ -149,7 +169,18 @@ public class MainForm {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //some code
+                boolean dataCorrect = !firstNameText.getText().isEmpty() && !secondNameText.getText().isEmpty() && !thirdNameText.getText().isEmpty();
+                if (dataCorrect) {
+                    ClientInfo newClient = new ClientInfo(firstNameText.getText(), secondNameText.getText(), thirdNameText.getText());
+                    clients.add(newClient);
+                    try {
+                        dbHandler.addClient(newClient);
+                    } catch (Exception dbExc) { }
+                    modelClients.fireTableDataChanged();
+                }
+                else {
+                    JOptionPane.showMessageDialog(clientFrame, "Bad input");
+                }
             }
         });
 
@@ -225,7 +256,7 @@ public class MainForm {
         inputPanel.add(new JLabel("Service name", JLabel.CENTER));
         JTextField nameText = new JTextField();
         inputPanel.add(nameText);
-        inputPanel.add(new JLabel("Service name", JLabel.CENTER));
+        inputPanel.add(new JLabel("Service price", JLabel.CENTER));
         JTextField priceText = new JTextField();
         inputPanel.add(priceText);
 
@@ -237,8 +268,26 @@ public class MainForm {
         addButton.setPreferredSize(new Dimension(320, 60));
         addButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                //some code
+            public void actionPerformed(ActionEvent ae) {
+                boolean dataCorrect = !typeText.getText().isEmpty() && !nameText.getText().isEmpty() && !priceText.getText().isEmpty();
+                if (dataCorrect) {
+                    try {
+                        String text = priceText.getText();
+                        text = text.replace(",", ".");
+                        double price = Double.parseDouble(text);
+
+                        ServiceInfo newService = new ServiceInfo(typeText.getText(), nameText.getText(), price);
+                        services.add(newService);
+                        dbHandler.addService(newService);
+                        modelServices.fireTableDataChanged();
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(serviceFrame, "Wrong price");
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(serviceFrame, "Bad input");
+                }
             }
         });
 
@@ -248,14 +297,32 @@ public class MainForm {
         return serviceFrame;
     }
 
+    public JFrame createDeleteClientFrame() {
+        JFrame frame = new JFrame();
+        return frame;
+    }
+
+    public JFrame createDeleteOrderFrame() {
+        JFrame frame = new JFrame();
+        return frame;
+    }
+
+    public JFrame createDeleteServiceFrame() {
+        JFrame frame = new JFrame();
+        return frame;
+    }
+
     public void addTables(JFrame frame) {
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFocusable(false);
 
         JPanel panelClients = new JPanel();
         panelClients.setLayout(new GridLayout());
         JScrollPane scrollPaneClients = new JScrollPane();
-        ClientTableModel modelClients = new ClientTableModel(clients);
+        modelClients = new ClientTableModel(clients);
+
         tableClients = new JTable(modelClients);
+        tableClients.setFont(new Font("Sans Serif", Font.PLAIN, 14));
         scrollPaneClients.setViewportView(tableClients);
         panelClients.add(scrollPaneClients);
         tabbedPane.addTab("Clients", panelClients);
@@ -263,22 +330,22 @@ public class MainForm {
         JPanel panelOrders = new JPanel();
         panelOrders.setLayout(new GridLayout());
         JScrollPane scrollPaneOrders = new JScrollPane();
-        OrderTableModel modelOrders = new OrderTableModel(orders);
+        modelOrders = new OrderTableModel(orders);
         tableOrders = new JTable(modelOrders);
+        tableOrders.setFont(new Font("Sans Serif", Font.PLAIN, 14));
         scrollPaneOrders.setViewportView(tableOrders);
         panelOrders.add(scrollPaneOrders);
         tabbedPane.addTab("Orders", panelOrders);
 
-        /*
         JPanel panelServices = new JPanel();
         panelServices.setLayout(new GridLayout());
         JScrollPane scrollPaneServices = new JScrollPane();
-        ServiceTableModel modelServices = new ServiceTableModel(services);
+        modelServices = new ServiceTableModel(services);
         tableServices = new JTable(modelServices);
+        tableServices.setFont(new Font("Sans Serif", Font.PLAIN, 14));
         scrollPaneServices.setViewportView(tableServices);
         panelServices.add(scrollPaneServices);
         tabbedPane.addTab("Services", panelServices);
-        */
 
         frame.add(tabbedPane, BorderLayout.CENTER);
     }

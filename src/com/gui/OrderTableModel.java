@@ -11,7 +11,7 @@ public class OrderTableModel extends AbstractTableModel {
     private List<OrderInfo> orders;
 
     public OrderTableModel(List<OrderInfo> orders) {
-        this.orders = new ArrayList<>(orders);
+        this.orders = orders;
     }
 
     @Override

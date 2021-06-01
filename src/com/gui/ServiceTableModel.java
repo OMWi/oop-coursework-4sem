@@ -11,7 +11,7 @@ public class ServiceTableModel extends AbstractTableModel {
     private List<ServiceInfo> services;
 
     public ServiceTableModel(List<ServiceInfo> services) {
-        this.services = new ArrayList<>(services);
+        this.services = services;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ServiceTableModel extends AbstractTableModel {
                 value = service.getName();
                 break;
             case 2:
-                value = service.getType();
+                value = service.getPrice();
                 break;
         }
         return value;
