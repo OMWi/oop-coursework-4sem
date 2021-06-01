@@ -7,10 +7,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import com.config.ConfigModel;
+import com.config.ConfigProvider;
 import com.data.ClientInfo;
 import com.data.DBHandler;
 import com.data.OrderInfo;
-import com.data.Serializer;
 import com.data.ServiceInfo;
 
 
@@ -32,6 +33,8 @@ public class MainForm {
     private ArrayList<OrderInfo> orders;
     private DBHandler dbHandler;
 
+    private String configPath = "config";
+
     private String url = "jdbc:mysql://localhost:3306/oop_4sem";
     private String user = "root";
     private String password = "573458";
@@ -41,20 +44,26 @@ public class MainForm {
     }
 
     public MainForm() {
-        //reading data
+        ConfigProvider configProvider = new ConfigProvider(configPath);
+        ConfigModel config;
         try {
-            dbHandler = new DBHandler(url, user, password);
+            config = (ConfigModel) configProvider.load();
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Failed to load configs");
+            return;
+        }
+
+        try {
+            dbHandler = new DBHandler(config.getUrl(), config.getUser(), config.getPassword());
             clients = dbHandler.readClients();
             orders = dbHandler.readOrders();
             services = dbHandler.readServices();
         } catch (Exception e) { }
 
-
         frame = createMainFrame("Химчистка");
         frame.setJMenuBar(createMenuBar());
-        addTables(frame);
-
-
+        frame.add(createTabbedPane());
         frame.setVisible(true);
     }
 
@@ -312,7 +321,7 @@ public class MainForm {
         return frame;
     }
 
-    public void addTables(JFrame frame) {
+    public JTabbedPane createTabbedPane() {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFocusable(false);
 
@@ -347,7 +356,7 @@ public class MainForm {
         panelServices.add(scrollPaneServices);
         tabbedPane.addTab("Services", panelServices);
 
-        frame.add(tabbedPane, BorderLayout.CENTER);
+        return tabbedPane;
     }
 
 }

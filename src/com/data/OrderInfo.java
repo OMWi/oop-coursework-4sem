@@ -4,11 +4,18 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class OrderInfo {
+    private static int globalID = 0;
+    private int ID;
+
     private String clientFirstName;
     private String clientSecondName;
     private String serviceName;
     private Date receiptDate;
     private Date returnDate;
+
+    public int getID() {
+        return ID;
+    }
 
     public String getClientFirstName() {
         return clientFirstName;
@@ -35,6 +42,7 @@ public class OrderInfo {
     }
 
     public OrderInfo(String clientFirstName, String clientSecondName, String serviceName, Date receiptDate) {
+        ID = globalID++;
         this.clientFirstName = clientFirstName;
         this.clientSecondName = clientSecondName;
         this.serviceName = serviceName;
@@ -43,6 +51,7 @@ public class OrderInfo {
     }
 
     public OrderInfo(String clientFirstName, String clientSecondName, String serviceName, Date receiptDate, Date returnDate) {
+        ID = globalID++;
         this.clientFirstName = clientFirstName;
         this.clientSecondName = clientSecondName;
         this.serviceName = serviceName;
