@@ -3,7 +3,7 @@ package com.data;
 import java.sql.Date;
 
 public class OrderInfo {
-    private static int globalID = 0;
+    private static int globalID = 1;
     private double discount = 0.03;
 
     private int id;

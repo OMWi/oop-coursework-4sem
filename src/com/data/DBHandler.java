@@ -1,9 +1,6 @@
 package com.data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class DBHandler {
@@ -47,14 +44,24 @@ public class DBHandler {
     }
 
     public void addOrder(OrderInfo order) throws Exception {
-        statement.execute("INSERT INTO orders (id, clientID, servicID, price, receiptDate) VALUES " +
-                String.format("(%d, %d, %d, %f, \"%s\");", order.getID(), order.getClientID(),
+        statement.execute("INSERT INTO orders (id, clientID, serviceID, price, receiptDate) VALUES " +
+                String.format("(%d, %d, %d, %s, \"%s\");", order.getID(), order.getClientID(),
                         order.getServiceID(), order.getPrice(), order.getReceiptDate().toString()));
     }
 
     public void addService(ServiceInfo service) throws Exception {
         String comm = "INSERT INTO services (id, type, name, price) VALUES " +
                 String.format("(%d, \"%s\", \"%s\", %s);", service.getId(), service.getType(), service.getName(), service.getPrice());
+        statement.execute(comm);
+    }
+
+    public void updateClientVisits(int validClientID, int newValueOfVisits) throws Exception {
+        String comm = String.format("UPDATE clients SET visits=%d WHERE id=%d", newValueOfVisits, validClientID);
+        statement.execute(comm);
+    }
+
+    public void updateOrderReturnDate(int validOrderID, Date newDate) throws Exception {
+        String comm = String.format("UPDATE orders SET returnDate='%s' WHERE id=%d", newDate.toString(), validOrderID);
         statement.execute(comm);
     }
 

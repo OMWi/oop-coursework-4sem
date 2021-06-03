@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.config.ConfigModel;
@@ -45,7 +47,7 @@ public class MainForm {
             config = (ConfigModel) configProvider.load();
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Failed to load configuration file");
+            JOptionPane.showMessageDialog(null, "Не удалось загрузить конфигурационный файл");
             return;
         }
 
@@ -75,47 +77,65 @@ public class MainForm {
             JFrame clientFrame = createAddClientFrame();
             clientFrame.setVisible(true);
         }
+        else if ("return order".equals(e.getActionCommand())) {
+            String input = JOptionPane.showInputDialog("Введите id заказа:");
+            try {
+                int id = Integer.parseInt(input);
+                boolean isFound = false;
+                for (OrderInfo elem : orders) {
+                    if (elem.getID() == id) {
+                        isFound = true;
+                        elem.setReturnDate(Date.valueOf(LocalDate.now()));
+                        dbHandler.updateOrderReturnDate(elem.getID(), Date.valueOf(LocalDate.now()));
+                        modelOrders.fireTableDataChanged();
+                        break;
+                    }
+                }
+                if (!isFound) {
+                    throw new Exception();
+                }
+            }
+            catch (Exception kekwException) {
+                JOptionPane.showMessageDialog(frame, "Заказ с таким id не найден");
+            }
+        }
     }
 
     public JMenuBar createMenuBar() {
-        // todo: add mnemonics
         menuBar = new JMenuBar();
-        JMenu menuNew = new JMenu("New");
+        JMenu menuNew = new JMenu("Добавить");
+        menuNew.setFont(new Font("Arial", Font.BOLD, 15));
         //menuNew.setMnemonic(KeyEvent.VK_N);
-        JMenuItem newOrderMenuItem = new JMenuItem("New order...");
-        newOrderMenuItem.setActionCommand("new order");
-        newOrderMenuItem.addActionListener(this::actionPerformed);
-        menuNew.add(newOrderMenuItem);
 
-        JMenuItem newServiceMenuItem = new JMenuItem("New service...");
-        newServiceMenuItem.setActionCommand("new service");
-        newServiceMenuItem.addActionListener(this::actionPerformed);
-        menuNew.add(newServiceMenuItem);
-
-        JMenuItem newClientMenuItem = new JMenuItem("New client");
+        JMenuItem newClientMenuItem = new JMenuItem("Добавить клиента");
+        newClientMenuItem.setFont(new Font("Arial", Font.BOLD, 15));
         newClientMenuItem.setActionCommand("new client");
         newClientMenuItem.addActionListener(this::actionPerformed);
         menuNew.add(newClientMenuItem);
 
-        JMenu menuDelete = new JMenu("Delete");
-        //menuDelete.setMnemonic(KeyEvent.VK_D);
-        JMenuItem deleteOrderMenuItem = new JMenuItem("Delete order...");
-        deleteOrderMenuItem.setActionCommand("delete order");
-        deleteOrderMenuItem.addActionListener(this::actionPerformed);
-        menuDelete.add(deleteOrderMenuItem);
+        JMenuItem newServiceMenuItem = new JMenuItem("Добавить услугу");
+        newServiceMenuItem.setFont(new Font("Arial", Font.BOLD, 15));
+        newServiceMenuItem.setActionCommand("new service");
+        newServiceMenuItem.addActionListener(this::actionPerformed);
+        menuNew.add(newServiceMenuItem);
 
-        JMenuItem deleteServiceMenuItem = new JMenuItem("Delete service...");
-        deleteServiceMenuItem.setActionCommand("delete service");
-        deleteServiceMenuItem.addActionListener(this::actionPerformed);
-        menuDelete.add(deleteServiceMenuItem);
+        JMenuItem newOrderMenuItem = new JMenuItem("Добавить заказ");
+        newOrderMenuItem.setFont(new Font("Arial", Font.BOLD, 15));
+        newOrderMenuItem.setActionCommand("new order");
+        newOrderMenuItem.addActionListener(this::actionPerformed);
+        menuNew.add(newOrderMenuItem);
 
-        JMenuItem deleteClientMenuItem = new JMenuItem("Delete client");
-        deleteClientMenuItem.setActionCommand("delete client");
-        deleteClientMenuItem.addActionListener(this::actionPerformed);
-        menuDelete.add(deleteClientMenuItem);
+        JMenu menuEdit = new JMenu("Изменить");
+        menuEdit.setFont(new Font("Arial", Font.BOLD, 15));
+
+        JMenuItem returnOrderItem = new JMenuItem("Выставить дату возврата заказа");
+        returnOrderItem.setFont(new Font("Arial", Font.BOLD, 15));
+        returnOrderItem.setActionCommand("return order");
+        returnOrderItem.addActionListener(this::actionPerformed);
+        menuEdit.add(returnOrderItem);
 
         menuBar.add(menuNew);
-        menuBar.add(menuDelete);
+        menuBar.add(menuEdit);
         return menuBar;
     }
 
@@ -142,13 +162,13 @@ public class MainForm {
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(3, 2, 0, 2));
 
-        inputPanel.add(new JLabel("First name", JLabel.CENTER));
+        inputPanel.add(new JLabel("Фамилия", JLabel.CENTER));
         JTextField firstNameText = new JTextField();
         inputPanel.add(firstNameText);
-        inputPanel.add(new JLabel("Second name", JLabel.CENTER));
+        inputPanel.add(new JLabel("Имя", JLabel.CENTER));
         JTextField secondNameText = new JTextField();
         inputPanel.add(secondNameText);
-        inputPanel.add(new JLabel("Third name", JLabel.CENTER));
+        inputPanel.add(new JLabel("Отчество", JLabel.CENTER));
         JTextField thirdNameText = new JTextField();
         inputPanel.add(thirdNameText);
 
@@ -156,7 +176,7 @@ public class MainForm {
             c.setFont(new Font("Arial", Font.BOLD, 16));
         }
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("Добавить");
         addButton.setPreferredSize(new Dimension(320, 60));
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -171,7 +191,7 @@ public class MainForm {
                     modelClients.fireTableDataChanged();
                 }
                 else {
-                    JOptionPane.showMessageDialog(clientFrame, "Bad input");
+                    JOptionPane.showMessageDialog(clientFrame, "Проверьте данные");
                 }
             }
         });
@@ -188,37 +208,86 @@ public class MainForm {
         orderFrame.setAlwaysOnTop(true);
         orderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         orderFrame.setLocationRelativeTo(frame);
-
         JPanel orderPanel = new JPanel();
         orderFrame.setContentPane(orderPanel);
         orderPanel.setLayout(new BorderLayout(0, 3));
-
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(4, 2, 0, 2));
+        inputPanel.setLayout(new GridLayout(2, 2, 0, 2));
 
-        inputPanel.add(new JLabel("Client first name", JLabel.CENTER));
-        JTextField firstNameText = new JTextField();
-        inputPanel.add(firstNameText);
-        inputPanel.add(new JLabel("Client second name", JLabel.CENTER));
-        JTextField secondNameText = new JTextField();
-        inputPanel.add(secondNameText);
-        inputPanel.add(new JLabel("Service name", JLabel.CENTER));
-        JTextField serviceNameText = new JTextField();
-        inputPanel.add(serviceNameText);
-        inputPanel.add(new JLabel("Receipt date", JLabel.CENTER));
-        JTextField dateText = new JTextField();
-        inputPanel.add(dateText);
-
+        inputPanel.add(new JLabel("ID клиента", JLabel.CENTER));
+        JTextField clientIdText = new JTextField();
+        inputPanel.add(clientIdText);
+        inputPanel.add(new JLabel("ID услуги", JLabel.CENTER));
+        JTextField serviceIdText = new JTextField();
+        inputPanel.add(serviceIdText);
         for (Component c : inputPanel.getComponents()) {
             c.setFont(new Font("Arial", Font.BOLD, 16));
         }
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("Добавить");
         addButton.setPreferredSize(new Dimension(320, 60));
         addButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                //some code
+            public void actionPerformed(ActionEvent ae) {
+                boolean isEmpty = clientIdText.getText().isEmpty() || serviceIdText.getText().isEmpty() || serviceIdText.getText().isEmpty();
+                if (isEmpty) {
+                    JOptionPane.showMessageDialog(orderFrame, "Введите данные");
+                    return;
+                }
+                int clientId, serviceId;
+                ClientInfo client = clients.get(0);
+                try {
+                    clientId = Integer.parseInt(clientIdText.getText());
+                    boolean isExist = false;
+                    for (ClientInfo elem : clients) {
+                        if (elem.getId() == clientId) {
+                            isExist = true;
+                            client = elem;
+                            break;
+                        }
+                    }
+                    if (!isExist) {
+                        JOptionPane.showMessageDialog(orderFrame, "Клиент не найден");
+                        return;
+                    }
+                }
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(orderFrame, "Неправильный id клиента");
+                    return;
+                }
+                ServiceInfo service = services.get(0);
+                try {
+                    serviceId = Integer.parseInt(serviceIdText.getText());
+                    boolean isExist = false;
+                    for (ServiceInfo elem : services) {
+                        if (elem.getId() == serviceId) {
+                            isExist = true;
+                            service = elem;
+                            break;
+                        }
+                    }
+                    if (!isExist) {
+                        JOptionPane.showMessageDialog(orderFrame, "Услуга не найдена");
+                        return;
+                    }
+                }
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(orderFrame, "Неправильный id услуги");
+                    return;
+                }
+                client.visit();
+                modelClients.fireTableDataChanged();
+                OrderInfo newOrder = new OrderInfo(client, service, Date.valueOf(LocalDate.now()));
+                try {
+                    orders.add(newOrder);
+                    dbHandler.addOrder(newOrder);
+                    modelOrders.fireTableDataChanged();
+                    orderFrame.dispose();
+                }
+                catch (Exception e) {
+                    JOptionPane.showMessageDialog(orderFrame, e.getMessage());
+                    return;
+                }
             }
         });
 
@@ -240,15 +309,18 @@ public class MainForm {
         servicePanel.setLayout(new BorderLayout(0, 3));
 
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(3, 2, 0, 2));
+        inputPanel.setLayout(new GridLayout(3, 2, 0, 1));
 
-        inputPanel.add(new JLabel("Service type", JLabel.CENTER));
+        inputPanel.add(new JLabel("Тип услуги", JLabel.CENTER));
         JTextField typeText = new JTextField();
         inputPanel.add(typeText);
-        inputPanel.add(new JLabel("Service name", JLabel.CENTER));
+
+
+        inputPanel.add(new JLabel("Наименование услуги", JLabel.CENTER));
         JTextField nameText = new JTextField();
         inputPanel.add(nameText);
-        inputPanel.add(new JLabel("Service price", JLabel.CENTER));
+
+        inputPanel.add(new JLabel("Стоимость услуги", JLabel.CENTER));
         JTextField priceText = new JTextField();
         inputPanel.add(priceText);
 
@@ -256,8 +328,8 @@ public class MainForm {
             c.setFont(new Font("Arial", Font.BOLD, 16));
         }
 
-        JButton addButton = new JButton("Add");
-        addButton.setPreferredSize(new Dimension(320, 60));
+        JButton addButton = new JButton("Добавить");
+        addButton.setPreferredSize(new Dimension(600, 60));
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -274,11 +346,14 @@ public class MainForm {
                         modelServices.fireTableDataChanged();
                     }
                     catch (Exception e) {
-                        JOptionPane.showMessageDialog(serviceFrame, "Wrong price");
+                        JOptionPane.showMessageDialog(serviceFrame, "Неправильный формат цены");
+                        return;
                     }
+                    nameText.setText("");
+                    priceText.setText("");
                 }
                 else {
-                    JOptionPane.showMessageDialog(serviceFrame, "Bad input");
+                    JOptionPane.showMessageDialog(serviceFrame, "Проверьте данные");
                 }
             }
         });
@@ -299,30 +374,32 @@ public class MainForm {
         modelClients = new ClientTableModel(clients);
 
         tableClients = new JTable(modelClients);
-        tableClients.setFont(new Font("Sans Serif", Font.PLAIN, 14));
+        tableClients.setFont(new Font("Sans Serif", Font.PLAIN, 15));
         scrollPaneClients.setViewportView(tableClients);
         panelClients.add(scrollPaneClients);
-        tabbedPane.addTab("Clients", panelClients);
-
-        JPanel panelOrders = new JPanel();
-        panelOrders.setLayout(new GridLayout());
-        JScrollPane scrollPaneOrders = new JScrollPane();
-        modelOrders = new OrderTableModel(orders);
-        tableOrders = new JTable(modelOrders);
-        tableOrders.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-        scrollPaneOrders.setViewportView(tableOrders);
-        panelOrders.add(scrollPaneOrders);
-        tabbedPane.addTab("Orders", panelOrders);
+        tabbedPane.addTab("Клиенты", panelClients);
 
         JPanel panelServices = new JPanel();
         panelServices.setLayout(new GridLayout());
         JScrollPane scrollPaneServices = new JScrollPane();
         modelServices = new ServiceTableModel(services);
         tableServices = new JTable(modelServices);
-        tableServices.setFont(new Font("Sans Serif", Font.PLAIN, 14));
+        tableServices.setFont(new Font("Sans Serif", Font.PLAIN, 15));
         scrollPaneServices.setViewportView(tableServices);
         panelServices.add(scrollPaneServices);
-        tabbedPane.addTab("Services", panelServices);
+        tabbedPane.addTab("Услуги", panelServices);
+
+        JPanel panelOrders = new JPanel();
+        panelOrders.setLayout(new GridLayout());
+        JScrollPane scrollPaneOrders = new JScrollPane();
+        modelOrders = new OrderTableModel(orders);
+        tableOrders = new JTable(modelOrders);
+        tableOrders.setFont(new Font("Sans Serif", Font.PLAIN, 15));
+        scrollPaneOrders.setViewportView(tableOrders);
+        panelOrders.add(scrollPaneOrders);
+        tabbedPane.addTab("Заказы", panelOrders);
+
+        tabbedPane.setFont(new Font("Arial", Font.BOLD, 15));
 
         return tabbedPane;
     }

@@ -21,7 +21,7 @@ public class OrderTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -29,19 +29,22 @@ public class OrderTableModel extends AbstractTableModel {
         String name = "Unknown";
         switch (column) {
             case 0:
-                name = "Client id";
+                name = "ID";
                 break;
             case 1:
-                name = "Service id";
+                name = "ID клиента";
                 break;
             case 2:
-                name = "Price";
+                name = "ID услуги";
                 break;
             case 3:
-                name = "Receipt date";
+                name = "Цена";
                 break;
             case 4:
-                name = "Return date";
+                name = "Дата приема";
+                break;
+            case 5:
+                name = "Дата возврата";
                 break;
         }
         return name;
@@ -49,13 +52,13 @@ public class OrderTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        Class type = int.class;
+        Class type = Object.class;
         switch (columnIndex) {
-            case 2:
+            case 3:
                 type = double.class;
                 break;
-            case 3:
             case 4:
+            case 5:
                 type = LocalDate.class;
                 break;
         }
@@ -68,18 +71,21 @@ public class OrderTableModel extends AbstractTableModel {
         Object value = null;
         switch (columnIndex) {
             case 0:
-                value = order.getClientID();
+                value = order.getID();
                 break;
             case 1:
-                value = order.getServiceID();
+                value = order.getClientID();
                 break;
             case 2:
-                value = order.getPrice();
+                value = order.getServiceID();
                 break;
             case 3:
-                value = order.getReceiptDate();
+                value = order.getPrice();
                 break;
             case 4:
+                value = order.getReceiptDate();
+                break;
+            case 5:
                 value = order.getReturnDate();
                 break;
         }

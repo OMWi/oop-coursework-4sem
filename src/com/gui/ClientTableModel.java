@@ -27,19 +27,19 @@ public class ClientTableModel extends AbstractTableModel {
         String name = "Unknown";
         switch (column) {
             case 0:
-                name = "id";
+                name = "ID";
                 break;
             case 1:
-                name = "First name";
+                name = "Фамилия";
                 break;
             case 2:
-                name = "Second name";
+                name = "Имя";
                 break;
             case 3:
-                name = "Third name";
+                name = "Отчество";
                 break;
             case 4:
-                name = "Visits";
+                name = "Количество посещений";
                 break;
         }
         return name;
@@ -51,7 +51,7 @@ public class ClientTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0:
             case 4:
-                type = Integer.class;
+                type = Object.class;
                 break;
         }
         return type;

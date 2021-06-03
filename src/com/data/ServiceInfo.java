@@ -2,7 +2,7 @@ package com.data;
 
 import java.io.Serializable;
 public class ServiceInfo implements Serializable{
-    private static int globalID = 0;
+    private static int globalID = 1;
     private int id;
     private String type;
     private String name;

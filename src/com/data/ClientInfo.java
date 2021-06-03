@@ -1,7 +1,7 @@
 package com.data;
 
 public class ClientInfo {
-    private static int globalID = 0;
+    private static int globalID = 1;
     private int id;
     private String firstName;
     private String secondName;
@@ -26,6 +26,10 @@ public class ClientInfo {
 
     public int getVisits() {
         return visits;
+    }
+
+    public void visit() {
+        this.visits++;
     }
 
     public ClientInfo(String firstName, String secondName, String thirdName) {

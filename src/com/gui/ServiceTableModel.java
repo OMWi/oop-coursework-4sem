@@ -21,7 +21,7 @@ public class ServiceTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -29,13 +29,16 @@ public class ServiceTableModel extends AbstractTableModel {
         String name = "Unknown";
         switch (column) {
             case 0:
-                name = "Service type";
+                name = "ID";
                 break;
             case 1:
-                name = "Service name";
+                name = "Тип услуги";
                 break;
             case 2:
-                name = "Price";
+                name = "Наименование";
+                break;
+            case 3:
+                name = "Стоимость";
                 break;
         }
         return name;
@@ -45,7 +48,7 @@ public class ServiceTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         Class type = String.class;
         switch (columnIndex) {
-            case 2:
+            case 3:
                 type = double.class;
         }
         return type;
@@ -57,12 +60,15 @@ public class ServiceTableModel extends AbstractTableModel {
         Object value = null;
         switch (columnIndex) {
             case 0:
-                value = service.getType();
+                value = service.getId();
                 break;
             case 1:
-                value = service.getName();
+                value = service.getType();
                 break;
             case 2:
+                value = service.getName();
+                break;
+            case 3:
                 value = service.getPrice();
                 break;
         }
